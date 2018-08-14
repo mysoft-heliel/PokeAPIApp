@@ -3,9 +3,14 @@ package br.com.opet.tds.pokeapiapp.Activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,7 +27,8 @@ import br.com.opet.tds.pokeapiapp.R;
 
 public class MainActivity extends Activity {
 
-    private static final String URL = "https://pokeapi.co/api/v2/pokemon/1";
+    private static final String URL = "https://pokeapi.co/api/v2/pokemon/";
+    private static final String URL_SPRITE = "http://pokeapi.co/media/sprites/pokemon/";
     private RequestQueue queue;
     private Gson gson;
 
@@ -31,6 +37,9 @@ public class MainActivity extends Activity {
     private TextView textHeight;
     private TextView textWeight;
     private TextView textTypes;
+    private EditText textBusca;
+    private ImageView imvImagem;
+
 
     private ProgressBar progressBar;
 
@@ -40,11 +49,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         textID = findViewById(R.id.textID);
+        textBusca = findViewById(R.id.textBusca);
         textName = findViewById(R.id.textName);
         textHeight = findViewById(R.id.textHeight);
         textWeight = findViewById(R.id.textWeight);
         textTypes = findViewById(R.id.textTypes);
         progressBar = findViewById(R.id.progressConnection);
+        imvImagem = findViewById(R.id.imvImagem);
 
         GsonBuilder builder = new GsonBuilder();
         gson = builder.create();
@@ -54,7 +65,8 @@ public class MainActivity extends Activity {
 
     private void callPokemon(){
         progressBar.setVisibility(ProgressBar.VISIBLE);
-        StringRequest request = new StringRequest(Request.Method.GET,URL,onPokemonLoaded,onPokemonError);
+        String url_busca = URL+textName;
+        StringRequest request = new StringRequest(Request.Method.GET,url_busca,onPokemonLoaded,onPokemonError);
         queue.add(request);
     }
 
@@ -77,6 +89,8 @@ public class MainActivity extends Activity {
 
             Log.i("POKERESPONSE",response);
             progressBar.setVisibility(ProgressBar.GONE);
+            String url_busca_imagem = URL_SPRITE+textName;
+            Picasso.get().load(url_busca_imagem).into(imvImagem);
 
         }
     };
@@ -89,4 +103,8 @@ public class MainActivity extends Activity {
             progressBar.setVisibility(ProgressBar.GONE);
         }
     };
+
+    public void BuscaPokemon(View view) {
+        callPokemon();
+    }
 }
